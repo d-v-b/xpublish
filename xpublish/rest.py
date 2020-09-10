@@ -2,6 +2,7 @@ import cachey
 import uvicorn
 import xarray as xr
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from .dependencies import get_cache, get_dataset, get_dataset_ids
 from .routers import base_router, common_router, dataset_collection_router, zarr_router
@@ -153,6 +154,14 @@ class Rest:
         if not self._datasets:
             # fix openapi spec for single dataset
             self._app.openapi = SingleDatasetOpenAPIOverrider(self._app).openapi
+
+        self.app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
         return self._app
 
