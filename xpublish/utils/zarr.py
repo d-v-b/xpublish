@@ -14,6 +14,7 @@ from xarray.backends.zarr import (
 from zarr.meta import encode_fill_value
 from zarr.storage import array_meta_key, attrs_key, default_compressor, group_meta_key
 from zarr.util import normalize_shape
+from zarr.codecs import get_codec
 
 from .api import DATASET_ID_ATTR_KEY
 
@@ -147,7 +148,8 @@ def encode_chunk(chunk, filters=None, compressor=None):
 
     # compress
     if compressor:
-        cdata = compressor.encode(chunk)
+        _compressor = get_codec(compressor)
+        cdata = _compressor.encode(chunk)
     else:
         cdata = chunk
 
